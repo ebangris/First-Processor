@@ -1,3 +1,4 @@
 # DataPath
-ProgramCounter implemented in vhdl
-See DataPath-Structure.png to see how are connected the modules
+ProgramCounter implemented in vhdl.
+
+See DataPath.png to see how are connected the modules
