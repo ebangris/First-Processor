@@ -9,20 +9,21 @@ entity ProgramCounter is
 end ProgramCounter;
 
 architecture arq_PC of ProgramCounter is
-signal A : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
-
+signal res: std_logic_vector(31 downto 0):= x"00000000";
 begin
-	process (CLK)
-begin
-	if rst = '1' then 
-		PCout <= "00000000000000000000000000000000";
-	else
-		if CLK = '1' then
-			PCout <= PCaddress;
-		else
-			PCout <= "00000000000000000000000000000000";
-		end if;
-	end if;
-end process;
+res <= PCaddress;
+	process (rst, CLK)
+	begin
+		if (clk'event and clk = '1' and rst = '0') then
+				if PCaddress = "00000000000000000000000001000000" then
+					PCout <= "00000000000000000000000000000000";
+				else
+					PCout <= res;
+				end if;
+			end if;
+			if (rst = '1') then
+		      PCout <= "00000000000000000000000000000000";
+		   end if;
+	end process;
 end arq_PC;
 

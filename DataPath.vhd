@@ -27,30 +27,33 @@ component Suma
 	);
 	end component;
 		
-signal init: STD_LOGIC_VECTOR (31 downto 0):= (others => '0');
-signal nPC: STD_LOGIC_VECTOR (31 downto 0);
-signal nnPC: STD_LOGIC_VECTOR (31 downto 0);
+signal PCin: STD_LOGIC_VECTOR (31 downto 0):= (others => '0');
+signal nPCin: STD_LOGIC_VECTOR (31 downto 0);
+signal PCout: STD_LOGIC_VECTOR (31 downto 0):= (others => '0');
 
 begin
+
 inst_PC : ProgramCounter port map(
-		PCaddress => init,
+		PCaddress => PCin,
 		rst => rst,
 		CLK => CLK,
-		PCout => nPC
-		);
-
-inst_Sum: Suma port map(
-		A => nPC,
-		B => "00000000000000000000000000000100",
-		C => nnPC
+		PCout => PCout
 		);
 		
+inst_Sum: Suma port map(
+		A => PCout,
+		B => "00000000000000000000000000000100",
+		C => nPCin
+		);
+
 inst_nPC : ProgramCounter port map(
-		PCaddress => nnPC,
+		PCaddress => nPCin,
 		rst => rst,
 		CLK => CLK,
-		PCout => Addr
+		PCout => PCin
 		);
+		
+Addr <= PCout;
 		
 end arq_DP;
 

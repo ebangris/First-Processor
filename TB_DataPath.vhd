@@ -26,7 +26,7 @@ ARCHITECTURE behavior OF TB_DataPath IS
     
 
    --Inputs
-   signal rst : std_logic := '0';
+   signal rst : std_logic := '1';
    signal CLK : std_logic := '0';
 
  	--Outputs
@@ -57,16 +57,8 @@ BEGIN
    -- Stimulus process
    stim_proc: process
    begin		
-      -- hold reset state for 100 ns.
-      wait for CLK_period*2;
-		
-		wait for CLK_period*3;
-		rst <= '1';
-		
-		wait for CLK_period*6;
-		rst <= '1';
-      -- insert stimulus here 
-
+		wait for 10 ns;
+		rst <= '0';
       wait;
    end process;
 
