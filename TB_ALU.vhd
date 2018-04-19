@@ -8,7 +8,7 @@ ARCHITECTURE behavior OF TB_ALU IS
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT GppdALU
+    COMPONENT ALU
     PORT(
          A : IN  std_logic_vector(7 downto 0);
          B : IN  std_logic_vector(7 downto 0);
@@ -31,7 +31,7 @@ ARCHITECTURE behavior OF TB_ALU IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: GppdALU PORT MAP (
+   uut: ALU PORT MAP (
           A => A,
           B => B,
           C => C,

@@ -1,70 +1,39 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.numeric_std.all;
+use IEEE.std_logic_unsigned.all;
 
-entity GppdALU is
-    Port ( A : in  STD_LOGIC_VECTOR (7 downto 0);
-           B : in  STD_LOGIC_VECTOR (7 downto 0);
-           C : in  STD_LOGIC_VECTOR (7 downto 0);
-           Sc : in  STD_LOGIC_VECTOR (2 downto 0);
-           S : out  STD_LOGIC_VECTOR (7 downto 0));
-end GppdALU;
+entity ALU is
+    Port ( CRS1 : in  STD_LOGIC_VECTOR (31 downto 0);
+           MUXout : in  STD_LOGIC_VECTOR (31 downto 0);
+           ALUop : in  STD_LOGIC_VECTOR (5 downto 0);
+           ALUout : out  STD_LOGIC_VECTOR (31 downto 0));
+end ALU;
 
-architecture Behavioral of GppdALU is
-
-COMPONENT MiniALU_2
-	PORT(
-		A : IN std_logic_vector(7 downto 0);
-		B : IN std_logic_vector(7 downto 0);
-		C : IN std_logic_vector(7 downto 0);
-		Sc : IN std_logic_vector(1 downto 0);          
-		S : OUT std_logic_vector(7 downto 0)
-		);
-	END COMPONENT;
-	
-COMPONENT MiniALU_1
-	PORT(
-		A : IN std_logic_vector(7 downto 0);
-		B : IN std_logic_vector(7 downto 0);
-		C : IN std_logic_vector(7 downto 0);
-		Sc : IN std_logic_vector(1 downto 0);          
-		S : OUT std_logic_vector(7 downto 0)
-		);
-	END COMPONENT;
-
-component Multiplex8bit is
-	 Port ( A : in  STD_LOGIC_VECTOR(7 DOWNTO 0);
-			  B : in  STD_LOGIC_VECTOR(7 DOWNTO 0);
-			  Sel : in  STD_LOGIC;
-			  Cout : out  STD_LOGIC_VECTOR(7 DOWNTO 0));
-end component;
-
-signal TempA : STD_LOGIC_VECTOR(7 downto 0);
-signal TempB : STD_LOGIC_VECTOR(7 downto 0);
-
+architecture arq_ALU of ALU is
 begin
-
-Inst_MiniALU_1: MiniALU_2 PORT MAP(
-	A => A,
-	B => B,
-	C => C,
-	Sc => Sc(1 downto 0),
-	S => TempA
-);
-
-Inst_MiniALU_2: MiniALU_1 PORT MAP(
-	A => A,
-	B => B,
-	C => C,
-	Sc => Sc(1 downto 0),
-	S => TempB
-);
-
-ins_mpx_1: Multiplex8bit PORT MAP(
-	A => TempA,
-	B => TempB,
-	Sel => Sc(2),
-	Cout => S
-);
-
-end Behavioral;
+	process (ALUop,MUXout, CRS1)
+			begin
+			case (ALUop) is 
+				when "000000" => -- equivale al op3 de la suma de enteros
+					ALUout <= CRS1 + MUXout  ;
+				when "000001" => -- equivale al op3 del and para los enteros
+					ALUout <= CRS1 AND MUXout ;
+				when "000101" =>-- equivale al and not para los enteros
+					ALUout <= (CRS1 AND (NOT MUXout));
+				when "000010" =>-- equivale al or para los enteros
+					ALUout <= CRS1 OR MUXout ;
+				when "000110" => --equivale al or not para los enteros
+					ALUout <= NOT(CRS1 OR MUXout);
+				when "000011" =>--equivale al xor  para los enteros
+					ALUout <= CRS1 XOR MUXout ;
+				when "000111" =>--equivale al Xnor para los enteros
+					ALUout <= CRS1 XNOR MUXout ;
+				when "000100" => -- equivale al op3 de la resta de enteros
+					ALUout <= CRS1 - MUXout ;
+				when others =>
+					ALUout <= "00000000000000000000000000000000";
+		end case;
+	end process;
+end arq_ALU;
 
